@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    // 前端静态资源（React 构建产物）
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "build" } },
+    // 后端接口（Serverless 函数）
+    { "src": "api/user.js", "use": "@vercel/node" },
+    { "src": "api/recharge.js", "use": "@vercel/node" },
+    { "src": "api/admin.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    // 前端路由：所有非接口请求指向 index.html（React Router 接管）
+    { "src": "/(.*)", "dest": "/index.html" },
+    // 后端接口路由
+    { "src": "/api/user/(.*)", "dest": "api/user.js" },
+    { "src": "/api/recharge/(.*)", "dest": "api/recharge.js" },
+    { "src": "/api/admin/(.*)", "dest": "api/admin.js" }
+  ]
+}
