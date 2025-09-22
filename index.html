@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameVault - 游戏账号平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366F1',
+            secondary: '#EC4899',
+            dark: '#1E293B',
+            light: '#F8FAFC'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .panel-transition {
+        transition: all 0.3s ease;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .backdrop-blur {
+        backdrop-filter: blur(8px);
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-dark to-gray-800 text-light min-h-screen">
+  <!-- 登录面板 -->
+  <div id="loginPanel" class="fixed inset-0 flex items-center justify-center z-50 panel-transition">
+    <div class="bg-dark/80 backdrop-blur p-8 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl">
+      <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-primary text-shadow">GameVault</h2>
+        <p class="text-gray-400 mt-2">登录你的账号继续探索</p>
+      </div>
+      
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="loginUsername" class="block text-sm font-medium mb-1">用户名</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fas fa-user"></i>
+            </span>
+            <input type="text" id="loginUsername" class="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="输入用户名">
+          </div>
+        </div>
+        
+        <div>
+          <label for="loginPassword" class="block text-sm font-medium mb-1">密码</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fas fa-lock"></i>
+            </span>
+            <input type="password" id="loginPassword" class="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="输入密码">
+            <button type="button" id="toggleLoginPwd" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+              <i class="fas fa-eye-slash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <label class="flex items-center text-sm">
+            <input type="checkbox" class="rounded text-primary focus:ring-primary">
+            <span class="ml-2">记住我</span>
+          </label>
+          <button type="button" id="showRegisterBtn" class="text-primary hover:text-primary/80 text-sm">没有账号？注册</button>
+        </div>
+        
+        <button type="submit" class="w-full py-3 bg-primary hover:bg-primary/90 rounded-lg font-medium transition-colors">登录</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 注册面板 (默认隐藏) -->
+  <div id="registerPanel" class="fixed inset-0 flex items-center justify-center z-50 panel-transition opacity-0 invisible transform translate-y-4 pointer-events-none">
+    <div class="bg-dark/80 backdrop-blur p-8 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl">
+      <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-primary text-shadow">创建账号</h2>
+        <p class="text-gray-400 mt-2">加入我们，开启游戏之旅</p>
+      </div>
+      
+      <form id="registerForm" class="space-y-4">
+        <div>
+          <label for="registerUsername" class="block text-sm font-medium mb-1">用户名</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fas fa-user-plus"></i>
+            </span>
+            <input type="text" id="registerUsername" class="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="设置用户名">
+          </div>
+        </div>
+        
+        <div>
+          <label for="registerPassword" class="block text-sm font-medium mb-1">密码</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fas fa-key"></i>
+            </span>
+            <input type="password" id="registerPassword" class="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="设置密码（至少8位）">
+            <button type="button" id="toggleRegisterPwd" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+              <i class="fas fa-eye-slash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <button type="button" id="showLoginBtn" class="text-primary hover:text-primary/80 text-sm">已有账号？登录</button>
+        </div>
+        
+        <button type="submit" class="w-full py-3 bg-secondary hover:bg-secondary/90 rounded-lg font-medium transition-colors">注册</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 主游戏界面 (默认隐藏) -->
+  <div id="gameInterface" class="hidden">
+    <!-- 顶部导航 -->
+    <header class="fixed top-0 left-0 right-0 bg-dark/70 backdrop-blur py-4 px-6 flex items-center justify-between z-40 border-b border-gray-700">
+      <div class="flex items-center">
+        <h1 class="text-2xl font-bold text-primary mr-8">GameVault</h1>
+        <nav class="flex space-x-6">
+          <a href="#" class="text-gray-300 hover:text-white transition-colors">首页</a>
+          <a href="#" class="text-gray-300 hover:text-white transition-colors">游戏库</a>
+          <a href="#" class="text-gray-300 hover:text-white transition-colors">社区</a>
+        </nav>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <button id="showRechargeBtn" class="px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm transition-colors">
+          <i class="fas fa-diamond mr-1"></i> 充值
+        </button>
+        <div class="relative">
+          <button id="userMenuBtn" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:ring-2 hover:ring-primary transition-all">
+            <i class="fas fa-user"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 充值面板 (默认隐藏) -->
+    <div id="rechargePanel" class="fixed inset-0 flex items-center justify-center z-50 panel-transition opacity-0 invisible pointer-events-none">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="rechargeOverlay"></div>
+      <div class="relative bg-dark border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">钻石充值</h3>
+          <button id="closeRechargeBtn" class="text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="grid grid-cols-3 gap-3">
+            <button class="recharge-option py-4 border border-gray-600 rounded-lg hover:border-primary hover:bg-gray-700/50 transition-all">
+              <div class="text-lg font-medium">100钻</div>
+              <div class="text-sm text-gray-400">¥10</div>
+            </button>
+            <button class="recharge-option py-4 border border-gray-600 rounded-lg hover:border-primary hover:bg-gray-700/50 transition-all">
+              <div class="text-lg font-medium">500钻</div>
+              <div class="text-sm text-gray-400">¥50</div>
+            </button>
+            <button class="recharge-option py-4 border border-gray-600 rounded-lg hover:border-primary hover:bg-gray-700/50 transition-all">
+              <div class="text-lg font-medium">1000钻</div>
+              <div class="text-sm text-gray-400">¥98</div>
+            </button>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">支付方式</label>
+            <div class="grid grid-cols-2 gap-3">
+              <button class="py-3 border border-gray-600 rounded-lg flex items-center justify-center hover:border-primary transition-all">
+                <i class="fas fa-credit-card mr-2"></i> 银行卡
+              </button>
+              <button class="py-3 border border-gray-600 rounded-lg flex items-center justify-center hover:border-primary transition-all">
+                <i class="fas fa-mobile-alt mr-2"></i> 手机支付
+              </button>
+            </div>
+          </div>
+          
+          <button class="w-full py-3 bg-primary hover:bg-primary/90 rounded-lg font-medium transition-colors">
+            确认支付
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="pt-20 px-6 pb-10">
+      <div class="max-w-6xl mx-auto">
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold mb-2">推荐游戏</h2>
+          <p class="text-gray-400">为你精选的热门游戏</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 游戏卡片 1 -->
+          <div class="bg-gray-800/50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
+            <div class="h-48 overflow-hidden">
+              <img src="https://picsum.photos/400/300?random=1" alt="游戏封面" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="p-4">
+              <h3 class="font-bold text-lg mb-1">星际探险</h3>
+              <p class="text-gray-400 text-sm mb-3">探索未知星系，揭开宇宙奥秘</p>
+              <div class="flex justify-between items-center">
+                <span class="text-primary"><i class="fas fa-diamond mr-1"></i> 500钻</span>
+                <button class="px-3 py-1 bg-primary/20 hover:bg-primary/30 rounded-lg text-sm transition-colors">
+                  开始游戏
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 游戏卡片 2 -->
+          <div class="bg-gray-800/50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
+            <div class="h-48 overflow-hidden">
+              <img src="https://picsum.photos/400/300?random=2" alt="游戏封面" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="p-4">
+              <h3 class="font-bold text-lg mb-1">魔法大陆</h3>
+              <p class="text-gray-400 text-sm mb-3">习得上古魔法，对抗黑暗势力</p>
+              <div class="flex justify-between items-center">
+                <span class="text-primary"><i class="fas fa-diamond mr-1"></i> 800钻</span>
+                <button class="px-3 py-1 bg-primary/20 hover:bg-primary/30 rounded-lg text-sm transition-colors">
+                  开始游戏
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 游戏卡片 3 -->
+          <div class="bg-gray-800/50 rounded-xl overflow-hidden hover:shadow-xl transition-all group">
+            <div class="h-48 overflow-hidden">
+              <img src="https://picsum.photos/400/300?random=3" alt="游戏封面" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            <div class="p-4">
+              <h3 class="font-bold text-lg mb-1">荒野求生</h3>
+              <p class="text-gray-400 text-sm mb-3">在绝境中生存，挑战极限自我</p>
+              <div class="flex justify-between items-center">
+                <span class="text-primary"><i class="fas fa-diamond mr-1"></i> 300钻</span>
+                <button class="px-3 py-1 bg-primary/20 hover:bg-primary/30 rounded-lg text-sm transition-colors">
+                  开始游戏
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // 全局状态
+    let token = localStorage.getItem('token') || null;
+    let isLoggedIn = !!token;
+
+    // DOM 元素
+    const loginPanel = document.getElementById('loginPanel');
+    const registerPanel = document.getElementById('registerPanel');
+    const gameInterface = document.getElementById('gameInterface');
+    const rechargePanel = document.getElementById('rechargePanel');
+    const rechargeOverlay = document.getElementById('rechargeOverlay');
+
+    // 登录/注册面板切换
+    document.getElementById('showRegisterBtn').addEventListener('click', () => {
+      loginPanel.classList.add('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+      registerPanel.classList.remove('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+    });
+
+    document.getElementById('showLoginBtn').addEventListener('click', () => {
+      registerPanel.classList.add('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+      loginPanel.classList.remove('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+    });
+
+    // 密码显示切换
+    document.getElementById('toggleLoginPwd').addEventListener('click', function() {
+      const pwdInput = document.getElementById('loginPassword');
+      const icon = this.querySelector('i');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      } else {
+        pwdInput.type = 'password';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      }
+    });
+
+    document.getElementById('toggleRegisterPwd').addEventListener('click', function() {
+      const pwdInput = document.getElementById('registerPassword');
+      const icon = this.querySelector('i');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      } else {
+        pwdInput.type = 'password';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      }
+    });
+
+    // 充值面板控制
+    document.getElementById('showRechargeBtn').addEventListener('click', () => {
+      rechargePanel.classList.remove('opacity-0', 'invisible', 'pointer-events-none');
+    });
+
+    document.getElementById('closeRechargeBtn').addEventListener('click', closeRechargePanel);
+    rechargeOverlay.addEventListener('click', closeRechargePanel);
+
+    function closeRechargePanel() {
+      rechargePanel.classList.add('opacity-0', 'invisible', 'pointer-events-none');
+    }
+
+    // 登录表单提交
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+
+      // 模拟登录请求
+      setTimeout(() => {
+        token = 'mock-token-' + Date.now();
+        localStorage.setItem('token', token);
+        isLoggedIn = true;
+        loginPanel.classList.add('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+        gameInterface.classList.remove('hidden');
+      }, 800);
+    });
+
+    // 注册表单提交
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+
+      // 模拟注册请求
+      setTimeout(() => {
+        alert('注册成功，请登录');
+        registerPanel.classList.add('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+        loginPanel.classList.remove('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+      }, 800);
+    });
+
+    // 页面加载时检查登录状态
+    if (isLoggedIn) {
+      loginPanel.classList.add('opacity-0', 'invisible', 'transform', 'translate-y-4', 'pointer-events-none');
+      gameInterface.classList.remove('hidden');
+    }
+  </script>
+</body>
+  </html>
